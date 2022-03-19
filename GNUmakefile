@@ -9,9 +9,12 @@ opt=0
 # make clang=1 --> use clang/clang++
 # make clang=0 --> use gcc/g++
 clang=0
-#make no-warn=1 --> disable all warnings
-#make no-warn=0 --> enable all warnings
+# make no-warn=1 --> disable all warnings
+# make no-warn=0 --> enable all warnings
 no-warn=0
+# make python-only=1 --> only runs python, doesn't run the application
+# make python-only=0 --> runs everything
+python-only=0
 
 #~~~~ build program ~~~~
 EXE_PREFIX=main
@@ -36,18 +39,16 @@ BINFLAGS =
 GLEWDIR  = dependencies\GLEW
 GLFWDIR  = dependencies\GLFW
 GLMDIR   = dependencies\GLM
-imguiDIR = imgui
+imguiDIR = src/imgui
 
 CPPFLAGS += -I ${GLEWDIR}/include
 CPPFLAGS += -I ${GLFWDIR}/include
 CPPFLAGS += -I ${GLMDIR}/include
 CPPFLAGS += -I ${imguiDIR}
 
-#LDFLAGS  += -L ${GLEWDIR}/lib/Release/Win32 -Wl,-rpath,${GLEWDIR}/lib/Release/Win32 -l glew32s
-#LDFLAGS  += -L ${GLFWDIR}/lib -Wl,-rpath,${GLFWDIR}/lib -l glfw3 -l gdi32 -l user32 -l kernel32 -l opengl32 -l glu32
+LDFLAGS  += -L ${GLFWDIR}/lib -Wl,-rpath,${GLFWDIR}/lib -l glfw3 -l gdi32 -l user32 -l kernel32 -l opengl32 -l glu32
 
 #~~~~ source directories ~~~~#
-#SRC_DIRS = . imgui
 SRC_DIRS = src
 
 #~~~~ adjust platform-specific features ~~~~
@@ -85,11 +86,12 @@ GENERATED_FILES+=${wildcard output_* *~}
 
 WINDOWS_GENERATED_FILES:=${subst /,\,${GENERATED_FILES}}
 
+NO_DELETE_OBJECT_FILES = imgui\imgui.o imgui\imgui_demo.o imgui\imgui_draw.o imgui\imgui_impl_glfw.o imgui\imgui_impl_opengl3.o imgui\imgui_tables.o imgui\imgui_widgets.o
+NO_DELETE_OBJECT_FILES +=
+
 ifeq (${OS},Windows_NT)
 	GENERATED_FILES=${WINDOWS_GENERATED_FILES}
 endif
-
-IMGUI_OBJECT_FILES = imgui\imgui.o imgui\imgui_demo.o imgui\imgui_draw.o imgui\imgui_impl_glfw.o imgui\imgui_impl_opengl3.o imgui\imgui_tables.o imgui\imgui_widgets.o
 
 #~~~~ compiler/linker settings ~~~~
 CFLAGS   += -std=c99
@@ -134,6 +136,11 @@ ifeq (${strip ${no-warn}},1)
   BINFLAGS+=-w
 endif
 
+#~~~~ python-only option ~~~~
+ifeq (${strip ${python-only}},1)
+  BINFLAGS+=-D PYTHON_ONLY
+endif
+
 #~~~~ main target ~~~~
 build : ${EXE_FILES}
 
@@ -164,19 +171,16 @@ rebuild : clean build clear
 
 -include ${DEPEND_FILES}
 
-#${filter-out imgui\imgui.o,${GENERATED_FILES}}
-#${filter-out imgui\imgui.o,${filter-out ${subst /,\,${EXE_FILES}},${GENERATED_FILES}}}
-
 #~~~~ remove all files ~~~~
 clean :
 	@echo ==== cleaning ====
-	${REMOVE} ${filter-out ${IMGUI_OBJECT_FILES},${GENERATED_FILES}}
+	${REMOVE} ${filter-out ${NO_DELETE_OBJECT_FILES},${GENERATED_FILES}}
 	@${SKIP_LINE}
 
 #~~~~ remove generated files ~~~~
 clear :
 	@echo ==== clearing ====
-	${REMOVE} ${filter-out ${IMGUI_OBJECT_FILES},${filter-out ${subst /,\,${EXE_FILES}},${GENERATED_FILES}}}
+	${REMOVE} ${filter-out ${NO_DELETE_OBJECT_FILES},${filter-out ${subst /,\,${EXE_FILES}},${GENERATED_FILES}}}
 	@${SKIP_LINE}
 
 #~~~~ run main file ~~~~
