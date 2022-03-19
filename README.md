@@ -79,7 +79,7 @@ Une fois finit de travailler on envoie ses modifications
 git push -u origin titouan-classe-voiture
 ```
 
-Cette opération va créer une **pull request (PR)** sur Github.
+Après cette opération on a la possibilité de créer une **pull request (PR)** sur Github.
 Le but d'une PR est de regarder les changements effectuer et du décider ou non d'appliquer les changements faits à la branche principale *master*.
 
 C'est pourquoi si on est pas **sûr** de ses changements on ne fait rien de plus.
