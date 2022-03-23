@@ -40,7 +40,7 @@ ifneq (${strip ${python-only}},1)
   GLEWDIR  = dependencies\GLEW
   GLFWDIR  = dependencies\GLFW
   GLMDIR   = dependencies\GLM
-  imguiDIR = src/imgui
+  imguiDIR = src/app/imgui
 
   CPPFLAGS += -I ${GLEWDIR}/include
   CPPFLAGS += -I ${GLFWDIR}/include
@@ -51,7 +51,7 @@ ifneq (${strip ${python-only}},1)
 endif
 
 #~~~~ source directories ~~~~#
-SRC_DIRS = src src/app src/app/shader src/app/glew
+SRC_DIRS = src src/app src/app/shader src/app/glew src/app/imgui src/app/imgui_render
 
 #~~~~ adjust platform-specific features ~~~~
 ifneq (,${findstring Windows_NT,${OS}})
@@ -88,7 +88,10 @@ GENERATED_FILES+=${wildcard output_* *~}
 
 WINDOWS_GENERATED_FILES:=${subst /,\,${GENERATED_FILES}}
 
-NO_DELETE_OBJECT_FILES  = imgui\imgui.o imgui\imgui_demo.o imgui\imgui_draw.o imgui\imgui_impl_glfw.o imgui\imgui_impl_opengl3.o imgui\imgui_tables.o imgui\imgui_widgets.o
+NO_DELETE_OBJECT_FILES  = src\app\imgui\imgui.o src\app\imgui\imgui_demo.o src\app\imgui\imgui_draw.o
+NO_DELETE_OBJECT_FILES += src\app\imgui\imgui_impl_glfw.o src\app\imgui\imgui_impl_opengl3.o
+NO_DELETE_OBJECT_FILES += src\app\imgui\imgui_tables.o src\app\imgui\imgui_widgets.o
+
 NO_DELETE_OBJECT_FILES += src\app\glew\glew.o src\app\glew\glew.d
 
 ifeq (${OS},Windows_NT)
@@ -177,6 +180,12 @@ rebuild : clean build clear
 clean :
 	@echo ==== cleaning ====
 	${REMOVE} ${filter-out ${NO_DELETE_OBJECT_FILES},${GENERATED_FILES}}
+	@${SKIP_LINE}
+
+#~~~~ remove all files ~~~~
+force-clean :
+	@echo ==== force-cleaning ====
+	${REMOVE} ${GENERATED_FILES}
 	@${SKIP_LINE}
 
 #~~~~ remove generated files ~~~~

@@ -1,5 +1,5 @@
-#ifndef SHOW_MAP_UTILS_HPP
-#define SHOW_MAP_UTILS_HPP
+#ifndef PROJET_UTILS_HPP
+#define PROJET_UTILS_HPP
 
 
 void processInput(GLFWwindow *window)
@@ -25,4 +25,4 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 }
 
-#endif //SHOW_MAP_UTILS_HPP
+#endif //PROJET_UTILS_HPP

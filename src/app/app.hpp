@@ -1,6 +1,10 @@
 #ifndef PROJET_APP_HPP
 #define PROJET_APP_HPP
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -10,6 +14,7 @@
 #include <chrono>
 
 #include "utils.hpp"
+#include "imgui_render/render.hpp"
 
 #define FPS 144
 
@@ -62,6 +67,9 @@ namespace app {
         //Print info (to be removed)
         std::cout << glGetString(GL_VERSION) << '\n';
 
+        //Initialize ImGui library
+        imgui_render::init(window);
+
 
         //Loop until user closes the window
         while(!glfwWindowShouldClose(window))
@@ -76,8 +84,12 @@ namespace app {
             glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            //Render
 
+            /* Render */
+
+            imgui_render::render();
+
+            /* End Render */
 
 
             //Swap buffers
@@ -97,10 +109,13 @@ namespace app {
 
         }
 
+        //Terminate ImGui library
+        imgui_render::terminate();
+
         //Destroy window
         glfwDestroyWindow(window);
 
-        //Terminate library
+        //Terminate GLFW library
         glfwTerminate();
 
         return 0;
