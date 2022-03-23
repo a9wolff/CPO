@@ -1,3 +1,5 @@
+#include "app/app.hpp"
+
 #include <iostream>
 
 
@@ -23,7 +25,7 @@ int main()
 
     std::system("python python/main.py foo bar");
 
-    std::cout << "Application launches now!\n";
+    app::start_app();
 
     return 0;
 }

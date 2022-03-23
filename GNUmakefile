@@ -36,20 +36,22 @@ BINFLAGS =
 # additional include directory  : CPPFLAGS+=-I header/path
 # linking precompiled libraries : LDFLAGS+=-L library/path -Wl,-rpath,library/path -l library_name
 
-GLEWDIR  = dependencies\GLEW
-GLFWDIR  = dependencies\GLFW
-GLMDIR   = dependencies\GLM
-imguiDIR = src/imgui
+ifneq (${strip ${python-only}},1)
+  GLEWDIR  = dependencies\GLEW
+  GLFWDIR  = dependencies\GLFW
+  GLMDIR   = dependencies\GLM
+  imguiDIR = src/imgui
 
-CPPFLAGS += -I ${GLEWDIR}/include
-CPPFLAGS += -I ${GLFWDIR}/include
-CPPFLAGS += -I ${GLMDIR}/include
-CPPFLAGS += -I ${imguiDIR}
+  CPPFLAGS += -I ${GLEWDIR}/include
+  CPPFLAGS += -I ${GLFWDIR}/include
+  CPPFLAGS += -I ${GLMDIR}/include
+  CPPFLAGS += -I ${imguiDIR}
 
-LDFLAGS  += -L ${GLFWDIR}/lib -Wl,-rpath,${GLFWDIR}/lib -l glfw3 -l gdi32 -l user32 -l kernel32 -l opengl32 -l glu32
+  LDFLAGS  += -L ${GLFWDIR}/lib -Wl,-rpath,${GLFWDIR}/lib -l glfw3 -l gdi32 -l user32 -l kernel32 -l opengl32 -l glu32
+endif
 
 #~~~~ source directories ~~~~#
-SRC_DIRS = src
+SRC_DIRS = src src/app src/app/shader src/app/glew
 
 #~~~~ adjust platform-specific features ~~~~
 ifneq (,${findstring Windows_NT,${OS}})
@@ -86,8 +88,8 @@ GENERATED_FILES+=${wildcard output_* *~}
 
 WINDOWS_GENERATED_FILES:=${subst /,\,${GENERATED_FILES}}
 
-NO_DELETE_OBJECT_FILES = imgui\imgui.o imgui\imgui_demo.o imgui\imgui_draw.o imgui\imgui_impl_glfw.o imgui\imgui_impl_opengl3.o imgui\imgui_tables.o imgui\imgui_widgets.o
-NO_DELETE_OBJECT_FILES +=
+NO_DELETE_OBJECT_FILES  = imgui\imgui.o imgui\imgui_demo.o imgui\imgui_draw.o imgui\imgui_impl_glfw.o imgui\imgui_impl_opengl3.o imgui\imgui_tables.o imgui\imgui_widgets.o
+NO_DELETE_OBJECT_FILES += src\app\glew\glew.o src\app\glew\glew.d
 
 ifeq (${OS},Windows_NT)
 	GENERATED_FILES=${WINDOWS_GENERATED_FILES}
